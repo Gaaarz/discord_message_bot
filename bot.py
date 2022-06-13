@@ -32,11 +32,9 @@ def send_message(conn, channel_id, message_data):
 
         if 199 < resp.status < 300:
             print("Message sent!")
-            pass
 
         else:
             sys.stderr.write(f"Received HTTP {resp.status}: {resp.reason}\n")
-            pass
 
     except:
         sys.stderr.write("Failed to send_message\n")
@@ -59,5 +57,4 @@ if __name__ == '__main__':
     while(value):
         main(message)
         sleep(repeat)
-        
-
+       
