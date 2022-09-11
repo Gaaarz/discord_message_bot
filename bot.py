@@ -2,6 +2,8 @@ from http.client import HTTPSConnection
 import sys
 from json import dumps
 from time import sleep
+#If you want to use a random sleep
+#from random import random
 
 channel_id = "Channel_ID"
 server_id = "Server_ID"
@@ -57,4 +59,5 @@ if __name__ == '__main__':
     while(value):
         main(message)
         sleep(repeat)
-       
+        #Random sleep
+        #sleep(random()*2)
