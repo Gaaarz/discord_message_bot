@@ -1,27 +1,26 @@
-from http.client import HTTPSConnection
 import sys
-from json import dumps
+import json
 from time import sleep
+from http.client import HTTPSConnection
 #If you want to use a random sleep
 #from random import random
 
-channel_id = "Channel_ID"
-server_id = "Server_ID"
-token = "Authentification_Token"
-message = "Your Message"
-#Message repeat in seconds
-repeat = 60
+CHANNEL_ID = "Channel_ID"
+SERVER_ID = "Server_ID"
+TOKEN = "Authentification_Token"
+MESSAGE = "Your Message"
+REPEAT = 60
 
-
-header_data = {
+HEADER_DATA = {
     "content-type": "application/json",
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36",
-    "authorization": f"{token}",
+    "authorization": TOKEN,
     "host": "discordapp.com",
-    "referrer": f"https://discord.com/channels/{server_id}/{channel_id}"
+    "referrer": f"https://discord.com/channels/{SERVER_ID}/{CHANNEL_ID}"
 }
 
-print("Messages will be sent to " + header_data["referrer"] + ".")
+print(f"Messages will be sent to {HEADER_DATA['referrer']}.")
+
 
 def get_connection():
     return HTTPSConnection("discordapp.com", 443)
@@ -29,19 +28,18 @@ def get_connection():
 
 def send_message(conn, channel_id, message_data):
     try:
-        conn.request("POST", f"/api/v6/channels/{channel_id}/messages", message_data, header_data)
+        conn.request("POST", f"/api/v6/channels/{channel_id}/messages", message_data, HEADER_DATA)
         resp = conn.getresponse()
 
         if 199 < resp.status < 300:
             print("Message sent!")
-
         else:
             sys.stderr.write(f"Received HTTP {resp.status}: {resp.reason}\n")
 
-    except:
-        sys.stderr.write("Failed to send_message\n")
-        for key in header_data:
-            print(key + ": " + header_data[key])
+    except Exception as e:
+        sys.stderr.write(f"Failed to send_message: {e}\n")
+        for key, value in HEADER_DATA.items():
+            print(f"{key}: {value}")
 
 
 def main(msg):
@@ -50,14 +48,14 @@ def main(msg):
         "tts": "false",
     }
 
-    send_message(get_connection(), channel_id, dumps(message_data))
+    with get_connection() as conn:
+        send_message(conn, CHANNEL_ID, json.dumps(message_data))
 
 
 if __name__ == '__main__':
     print()
-    value=True
-    while(value):
-        main(message)
-        sleep(repeat)
+    while True:
+        main(MESSAGE)
+        sleep(REPEAT)
         #Random sleep
         #sleep(random()*2)
